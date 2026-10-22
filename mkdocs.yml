@@ -1,0 +1,80 @@
+site_name: Structural Engineering Notes
+site_description: Articles and books on structural steel design, structural analysis, dynamic analysis, and earthquake engineering
+site_author: Phealy Thourk
+# TODO: replace YOUR-USERNAME (and the repository name if you chose another one)
+site_url: https://PhealyThourk.github.io/engineering-notes/
+copyright: "© 2026 Phealy Thourk. All rights reserved."
+
+theme:
+  name: material
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/lightbulb
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to light mode
+  icon:
+    logo: material/book-open-page-variant
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+  - blog:
+      blog_dir: blog
+      post_date_format: long
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:       # equations written with $...$ and $$...$$
+      generic: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+extra_javascript:
+  - assets/javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+  #- Book:
+  #    - book/index.md
+  #    - 1. Introduction: book/01-introduction.md
+   #   - 2. Cross-section classification: book/02-classification.md
+  #    - 3. Flexural buckling: book/03-buckling.md
+  - Blog: blog/index.md
+  - Tools: tools.md
+  - About: about.md

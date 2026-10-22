@@ -1,0 +1,8 @@
+Copyright (c) 2026 Phealy Thourk. All rights reserved.
+
+The text, equations, figures and code of this website may not be copied, republished or
+sold without written permission of the author. Short quotations with a clear reference to
+the source are allowed.
+
+The content is provided "as is", without warranty of any kind. Calculations and examples are
+for learning only and must be checked by a qualified engineer before they are used in a design.
