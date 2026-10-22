@@ -51,7 +51,7 @@ Open http://127.0.0.1:8000. The page updates whenever you save a file.
    git add .
    git commit -m "First version of the website"
    git branch -M main
-   git remote add origin https://github.com/PhealyThourk/engineering-notes.git
+   git remote add origin https://github.com/PhealyThourk/Structural-engineering-website.git
    git push -u origin main
    ```
 4. On GitHub open **Settings -> Pages -> Build and deployment -> Source** and choose **GitHub Actions**.
