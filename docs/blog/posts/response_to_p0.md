@@ -16,7 +16,7 @@ When a single-degree-of-freedom system experiences a suddenly applied load, its 
 The suddenly applied load in structural dynamics has a very specific nature. It is often modeled as a step load — a force that jumps instantly from zero to a constant value at the moment 𝑡 = 0.
 
 <figure markdown="span">
-  ![Image title](../../../../../assets/images/Suddenlyappliedloadp0.png){ width="800" }
+  ![Image title](../../assets/images/Suddenlyappliedloadp0.png){ width="800" }
   <figcaption>Suddenly applied step load, increasing from zero to p0 = 5000 kN at t=0 and remaining constant thereafter.</figcaption>
 </figure>
 
@@ -57,7 +57,7 @@ $$
 ## Response to the suddenly applied load
 
 <figure markdown="span">
-  ![Image title](../../../../../assets/images/Response_to_p0.png){ width="800" }
+  ![Image title](../../assets/images/Response_to_p0.png){ width="800" }
   <figcaption>Damped SDOF response to a suddenly applied load</figcaption>
 </figure>
 
