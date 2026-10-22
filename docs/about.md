@@ -2,7 +2,7 @@
 
 ## The author
 
-**Phealy Thourk** writes about advanced structural engineering topics, including steel and concrete design, bridge capacity assessment, and structural dynamics. With experience spanning consultancy and academia, he shares explanations, resources, and learning materials that bridge theory and practice. His interests include structural health monitoring, Bayesian model updating, and the development of digital tools for engineers, from Python-based applications to educational courses.
+**Phealy Thourk** writes about advanced structural engineering topics, including steel and concrete design, bridge capacity assessment, and structural dynamics. With experience spanning consultancy and academia, he shares explanations, resources, and learning materials that bridge theory and practice. His interests include structural health monitoring, Bayesian model updating, response estimation, and the development of digital tools for engineers, from Python-based applications to educational courses.
 
 ## About this website
 
