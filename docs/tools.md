@@ -16,5 +16,10 @@ A web app for the resistance and buckling checks of I- and H-sections:
     The results must be checked independently by a qualified structural engineer before they
     are used in any design or construction.
 
-<!-- !!! tip "For the site owner" -->
-<!--   Replace `https://YOUR-APP.streamlit.app` with the address of your own web app. -->
+## Vibration to Forced Harmonic Load
+
+Explore the displacement response of a damped single degree of freedom system under sinusoidal loading. Enter mass, stiffness, damping, force amplitude, forcing frequency, initial conditions, and plot duration. The tool plots total, transient, and steady state response over time and reports natural frequency, frequency ratio, and steady state amplitude.
+
+[:material-open-in-new: Vibration to Forced Harmonic Load](../assets/tools/forced-response-tool.html){ .md-button target="_blank" rel="noopener" }
+
+

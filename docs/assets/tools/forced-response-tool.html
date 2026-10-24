@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Forced harmonic response plotter</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f3f6f9;
+      color: #233446;
+      font: 16px system-ui, sans-serif;
+    }
+
+    .app {
+      max-width: 1100px;
+      margin: 20px auto;
+      overflow: hidden;
+      border: 1px solid #d8e0e8;
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .head {
+      padding: 20px 26px;
+      background: #173b5e;
+      color: #fff;
+    }
+
+    .head h1 { margin-top: 0; }
+    .head p { margin-bottom: 0; }
+
+    .body {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 20px;
+      padding: 22px;
+    }
+
+    .form {
+      display: grid;
+      align-content: start;
+      gap: 11px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 650;
+    }
+
+    .field input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 9px;
+      border: 1px solid #bbc8d4;
+      border-radius: 6px;
+      font: inherit;
+    }
+
+    .field small,
+    footer { color: #607487; }
+
+    .buttons button {
+      padding: 10px;
+      border: 0;
+      border-radius: 6px;
+      background: #1769aa;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .buttons .reset {
+      background: #e6edf3;
+      color: #263d52;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid #e2e7ec;
+      border-radius: 7px;
+    }
+
+    .hover-readout {
+      margin: 8px 0;
+      padding: 9px 12px;
+      border-radius: 7px;
+      background: #f1f5f8;
+      color: #263d52;
+      font-size: .9em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .results {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .results div {
+      padding: 9px;
+      border-radius: 7px;
+      background: #f1f5f8;
+    }
+
+    .results span {
+      display: block;
+      color: #607487;
+      font-size: .8em;
+    }
+
+    .error { color: #a22; }
+
+    footer {
+      padding: 14px 22px;
+      border-top: 1px solid #e5ebef;
+      font-size: .85em;
+    }
+
+    @media (max-width: 700px) {
+      .body { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="head">
+      <h1>Forced harmonic response plotter</h1>
+      <p>Plot total displacement, transient response, and steady state response for a damped SDOF system.</p>
+    </header>
+
+    <div class="body">
+      <section class="form" aria-label="System and loading inputs">
+        <div class="field">
+          <label>Mass, m <input id="m" type="number" value="8000000" min="0" step="any"></label>
+          <small>kg</small>
+        </div>
+        <div class="field">
+          <label>Stiffness, k <input id="k" type="number" value="2000000000" min="0" step="any"></label>
+          <small>N/m</small>
+        </div>
+        <div class="field">
+          <label>Damping ratio, ξ <input id="xi" type="number" value="0.05" min="0" max="0.999999" step="any"></label>
+          <small>dimensionless</small>
+        </div>
+        <div class="field">
+          <label>Force amplitude, P₀ <input id="p0" type="number" value="5000000" min="0" step="any"></label>
+          <small>N</small>
+        </div>
+        <div class="field">
+          <label>Forcing frequency, f <input id="freq" type="number" value="2.5" min="0" step="any"></label>
+          <small>Hz</small>
+        </div>
+        <div class="field">
+          <label>Initial displacement, u₀ <input id="u0" type="number" value="0" step="any"></label>
+          <small>m</small>
+        </div>
+        <div class="field">
+          <label>Initial velocity, v₀ <input id="v0" type="number" value="0" step="any"></label>
+          <small>m/s</small>
+        </div>
+        <div class="field">
+          <label>Plot duration <input id="dur" type="number" value="10" min="0" step="any"></label>
+          <small>s</small>
+        </div>
+
+        <div class="buttons">
+          <button id="plot" type="button">Update plot</button>
+          <button id="reset" class="reset" type="button">Reset example</button>
+        </div>
+        <div id="err" class="error" role="alert"></div>
+      </section>
+
+      <section aria-labelledby="chart-title">
+        <h2 id="chart-title">Displacement response</h2>
+        <svg id="svg" viewBox="0 0 850 440" role="img" aria-label="Displacement response plot"></svg>
+        <div id="hoverReadout" class="hover-readout" aria-live="polite">Hover over the plot to inspect time and displacement.</div>
+        <p>
+          <span style="color:#111">━ Total response</span>
+          <span style="color:#2878b5">┅ Transient</span>
+          <span style="color:#ed7d31">┅ Steady state</span>
+        </p>
+        <div id="res" class="results"></div>
+      </section>
+    </div>
+
+    <footer>
+      Sinusoidal force P(t) = P₀ sin(Ωt). Inputs use SI units; displacement is shown in millimetres.
+      Assumes a linear underdamped single degree of freedom system.
+    </footer>
+  </main>
+
+  <script>
+    // Short names for frequently used page elements.
+    const $ = (id) => document.getElementById(id);
+    const chart = $("svg");
+    const svgNamespace = "http://www.w3.org/2000/svg";
+
+    const defaults = {
+      m: 8000000,
+      k: 2000000000,
+      xi: 0.05,
+      p0: 5000000,
+      freq: 2.5,
+      u0: 0,
+      v0: 0,
+      dur: 10
+    };
+
+    // Create one SVG shape and set its attributes.
+    function createSvgElement(tagName, attributes, text) {
+      const element = document.createElementNS(svgNamespace, tagName);
+
+      for (const [name, value] of Object.entries(attributes)) {
+        element.setAttribute(name, value);
+      }
+
+      if (text !== undefined) {
+        element.textContent = text;
+      }
+
+      return element;
+    }
+
+    // Read every user input and return it in SI units.
+    function readInputs() {
+      return {
+        mass: Number($("m").value),
+        stiffness: Number($("k").value),
+        dampingRatio: Number($("xi").value),
+        forceAmplitude: Number($("p0").value),
+        forcingFrequencyHz: Number($("freq").value),
+        initialDisplacement: Number($("u0").value),
+        initialVelocity: Number($("v0").value),
+        duration: Number($("dur").value)
+      };
+    }
+
+    // Return an error message when any input is outside the model's valid range.
+    function validateInputs(input) {
+      const values = Object.values(input);
+
+      if (!values.every(Number.isFinite)) {
+        return "Enter a valid number in every input.";
+      }
+      if (input.mass <= 0 || input.stiffness <= 0) {
+        return "Mass and stiffness must be greater than zero.";
+      }
+      if (input.dampingRatio < 0 || input.dampingRatio >= 1) {
+        return "Damping ratio must be from zero up to, but not including, one.";
+      }
+      if (input.forceAmplitude < 0) {
+        return "Force amplitude cannot be negative.";
+      }
+      if (input.forcingFrequencyHz <= 0 || input.duration <= 0) {
+        return "Forcing frequency and plot duration must be greater than zero.";
+      }
+
+      return "";
+    }
+
+    // Calculate the response history and the values shown in the result cards.
+    function calculateResponse(input) {
+      const {
+        mass,
+        stiffness,
+        dampingRatio,
+        forceAmplitude,
+        forcingFrequencyHz,
+        initialDisplacement,
+        initialVelocity,
+        duration
+      } = input;
+
+      const omegaN = Math.sqrt(stiffness / mass);
+      const omegaD = omegaN * Math.sqrt(1 - dampingRatio ** 2);
+      const forcingOmega = 2 * Math.PI * forcingFrequencyHz;
+      const frequencyRatio = forcingOmega / omegaN;
+
+      const dynamicDenominator =
+        (1 - frequencyRatio ** 2) ** 2
+        + (2 * dampingRatio * frequencyRatio) ** 2;
+
+      const phase = Math.atan2(
+        2 * dampingRatio * frequencyRatio,
+        1 - frequencyRatio ** 2
+      );
+
+      // An ideal undamped oscillator has unbounded response at resonance.
+      if (dampingRatio === 0 && Math.abs(frequencyRatio - 1) < 1e-8) {
+        return {
+          error: "Undamped resonance is unbounded. Add damping or change frequency."
+        };
+      }
+
+      // Transient-response coefficients from the calculation procedure.
+      const B1 = dampingRatio === 0
+        ? initialDisplacement
+        : initialDisplacement
+          + (2 * dampingRatio * frequencyRatio / dynamicDenominator)
+            * (forceAmplitude / stiffness);
+
+      const B2 =
+        (initialVelocity + dampingRatio * omegaN * B1) / omegaD
+        - ((1 - frequencyRatio ** 2) * forcingOmega
+          / (omegaD * dynamicDenominator))
+          * (forceAmplitude / stiffness);
+
+      const sampleCount = 1200;
+      const rows = [];
+      let maximumAbsoluteDisplacement = 0;
+
+      for (let index = 0; index <= sampleCount; index += 1) {
+        const time = duration * index / sampleCount;
+
+        // Response terms are converted from metres to millimetres for display.
+        const transient = Math.exp(-dampingRatio * omegaN * time)
+          * (
+            B1 * Math.cos(omegaD * time)
+            + B2 * Math.sin(omegaD * time)
+          ) * 1000;
+
+        const steadyState = forceAmplitude
+          / (stiffness * Math.sqrt(dynamicDenominator))
+          * Math.sin(forcingOmega * time - phase) * 1000;
+
+        const total = transient + steadyState;
+        rows.push({ time, total, transient, steadyState });
+
+        maximumAbsoluteDisplacement = Math.max(
+          maximumAbsoluteDisplacement,
+          Math.abs(total),
+          Math.abs(transient),
+          Math.abs(steadyState)
+        );
+      }
+
+      if (!Number.isFinite(maximumAbsoluteDisplacement)) {
+        return { error: "These inputs produce values too large to plot." };
+      }
+
+      return {
+        error: "",
+        rows,
+        duration,
+        maximumAbsoluteDisplacement,
+        naturalFrequencyHz: omegaN / (2 * Math.PI),
+        dampedFrequencyHz: omegaD / (2 * Math.PI),
+        frequencyRatio,
+        steadyAmplitudeMm: forceAmplitude
+          / (stiffness * Math.sqrt(dynamicDenominator)) * 1000
+      };
+    }
+
+    // Draw grid, axes, labels, and the three displacement histories in SVG.
+    function drawChart(response) {
+      const width = 850;
+      const height = 440;
+      const left = 70;
+      const right = 830;
+      const top = 24;
+      const bottom = 385;
+      const yLimit = Math.max(response.maximumAbsoluteDisplacement * 1.12, 0.001);
+
+      const xPosition = (time) =>
+        left + (right - left) * time / response.duration;
+
+      const yPosition = (displacementMm) =>
+        top + (bottom - top) * (yLimit - displacementMm) / (2 * yLimit);
+
+      chart.replaceChildren();
+
+      // Draw vertical time gridlines and their labels.
+      for (let tick = 0; tick <= 10; tick += 1) {
+        const time = response.duration * tick / 10;
+        const x = xPosition(time);
+
+        chart.append(
+          createSvgElement("line", {
+            x1: x, y1: top, x2: x, y2: bottom, stroke: "#e3e9ee"
+          }),
+          createSvgElement("text", {
+            x, y: bottom + 20, "text-anchor": "middle",
+            "font-size": 12, fill: "#536577"
+          }, Number(time.toPrecision(3)).toString())
+        );
+      }
+
+      // Draw displacement gridlines and their labels.
+      for (let tick = 0; tick <= 4; tick += 1) {
+        const displacement = yLimit - tick * yLimit / 2;
+        const y = yPosition(displacement);
+
+        chart.append(
+          createSvgElement("line", {
+            x1: left, y1: y, x2: right, y2: y, stroke: "#e3e9ee"
+          }),
+          createSvgElement("text", {
+            x: left - 8, y: y + 4, "text-anchor": "end",
+            "font-size": 12, fill: "#536577"
+          }, displacement.toFixed(2))
+        );
+      }
+
+      const series = [
+        { key: "total", color: "#111111", dash: "" },
+        { key: "transient", color: "#2878b5", dash: "7 4" },
+        { key: "steadyState", color: "#ed7d31", dash: "2 5" }
+      ];
+
+      for (const line of series) {
+        const points = response.rows
+          .map((row) =>
+            xPosition(row.time).toFixed(1)
+            + ","
+            + yPosition(row[line.key]).toFixed(1)
+          )
+          .join(" ");
+
+        chart.append(createSvgElement("polyline", {
+          points,
+          fill: "none",
+          stroke: line.color,
+          "stroke-width": 2,
+          "stroke-dasharray": line.dash
+        }));
+      }
+
+      // Draw the chart axes and their labels.
+      chart.append(
+        createSvgElement("line", {
+          x1: left, y1: top, x2: left, y2: bottom,
+          stroke: "#31485e"
+        }),
+        createSvgElement("line", {
+          x1: left, y1: bottom, x2: right, y2: bottom,
+          stroke: "#31485e"
+        }),
+        createSvgElement("text", {
+          x: width / 2, y: height - 10, "text-anchor": "middle",
+          "font-size": 14, fill: "#35495c"
+        }, "Time (s)"),
+        createSvgElement("text", {
+          x: 17, y: 205, transform: "rotate(-90 17 205)",
+          "text-anchor": "middle", "font-size": 14, fill: "#35495c"
+        }, "Displacement (mm)")
+      );
+
+      return { left, right, top, bottom, xPosition, yPosition };
+    }
+
+    // Put derived frequencies and amplitude below the chart.
+    function showResults(response) {
+      const results = [
+        ["Natural frequency", response.naturalFrequencyHz.toPrecision(4) + " Hz"],
+        ["Damped frequency", response.dampedFrequencyHz.toPrecision(4) + " Hz"],
+        ["Frequency ratio, β", response.frequencyRatio.toPrecision(4)],
+        ["Steady amplitude", response.steadyAmplitudeMm.toPrecision(4) + " mm"]
+      ];
+
+      $("res").replaceChildren(...results.map(([label, value]) => {
+        const card = document.createElement("div");
+        const name = document.createElement("span");
+        const result = document.createElement("strong");
+
+        name.textContent = label;
+        result.textContent = value;
+        card.append(name, result);
+        return card;
+      }));
+    }
+
+    // Show the nearest sampled values and mark that point on the total-response curve.
+    function enableHoverReadout(response, plot, cursor, marker) {
+      chart.onpointermove = (event) => {
+        const bounds = chart.getBoundingClientRect();
+        const svgX = (event.clientX - bounds.left) * 850 / bounds.width;
+        const timeFraction = (svgX - plot.left) / (plot.right - plot.left);
+        const clampedFraction = Math.max(0, Math.min(1, timeFraction));
+        const rowIndex = Math.round(clampedFraction * (response.rows.length - 1));
+        const row = response.rows[rowIndex];
+        const x = plot.xPosition(row.time);
+        const y = plot.yPosition(row.total);
+
+        cursor.setAttribute("x1", x);
+        cursor.setAttribute("x2", x);
+        cursor.setAttribute("visibility", "visible");
+        marker.setAttribute("cx", x);
+        marker.setAttribute("cy", y);
+        marker.setAttribute("visibility", "visible");
+
+        $("hoverReadout").textContent =
+          "x (time): " + row.time.toFixed(3) + " s"
+          + "  |  y (total displacement): " + row.total.toFixed(3) + " mm"
+          + "  |  transient: " + row.transient.toFixed(3) + " mm"
+          + "  |  steady state: " + row.steadyState.toFixed(3) + " mm";
+      };
+
+      chart.onpointerleave = () => {
+        $("hoverReadout").textContent =
+          "Hover over the plot to inspect time and displacement.";
+        cursor.setAttribute("visibility", "hidden");
+        marker.setAttribute("visibility", "hidden");
+      };
+    }
+
+    // Main update: read inputs, validate, calculate, draw, and report results.
+    function updatePlot() {
+      const input = readInputs();
+      const validationMessage = validateInputs(input);
+      $("err").textContent = validationMessage;
+
+      if (validationMessage) {
+        return;
+      }
+
+      const response = calculateResponse(input);
+
+      if (response.error) {
+        $("err").textContent = response.error;
+        return;
+      }
+
+      const plot = drawChart(response);
+      const cursor = createSvgElement("line", {
+        y1: plot.top,
+        y2: plot.bottom,
+        stroke: "#536577",
+        "stroke-width": 1,
+        "stroke-dasharray": "4 4",
+        visibility: "hidden",
+        "pointer-events": "none"
+      });
+      const marker = createSvgElement("circle", {
+        r: 4,
+        fill: "#111111",
+        stroke: "#ffffff",
+        "stroke-width": 1.5,
+        visibility: "hidden",
+        "pointer-events": "none"
+      });
+
+      chart.append(cursor, marker);
+      enableHoverReadout(response, plot, cursor, marker);
+      showResults(response);
+    }
+
+    // Restore the original example values.
+    function resetInputs() {
+      for (const [id, value] of Object.entries(defaults)) {
+        $(id).value = value;
+      }
+      updatePlot();
+    }
+
+    // Connect buttons and inputs, then draw the initial example.
+    $("plot").addEventListener("click", updatePlot);
+    $("reset").addEventListener("click", resetInputs);
+
+    document.querySelectorAll(".form input").forEach((input) => {
+      input.addEventListener("input", updatePlot);
+    });
+
+    updatePlot();
+  </script>
+</body>
+</html>
