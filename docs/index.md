@@ -11,14 +11,15 @@ Every calculation is explained step by step, with equations, figures and worked 
 
 <div class="grid cards" markdown>
 
-<!--
-:material-book-open-page-variant:{ .lg .middle } **The book**
+-   :material-book-open-page-variant:{ .lg .middle } **Book**
 
-*Steel Member Design Basics*: cross-section classification, buckling resistance and
-member checks, with worked examples.
+    ---
 
-[:octicons-arrow-right-24: Start reading](book/index.md)
--->
+    *Steel Member Design Basics*: cross-section classification, buckling resistance, and worked examples.
+
+    [:octicons-arrow-right-24: Read the book](book/index.md)
+
+
     
 
 -   :material-pencil:{ .lg .middle } **Articles**

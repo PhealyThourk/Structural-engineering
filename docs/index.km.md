@@ -10,6 +10,14 @@ hide:
 
 <div class="grid cards" markdown>
 
+-   :material-book-open-page-variant:{ .lg .middle } **សៀវភៅ**
+
+    ---
+
+    *មូលដ្ឋានរចនាធាតុដែកសំណង់*៖ ការចាត់ថ្នាក់ផ្នែកកាត់ ភាពធន់នឹងការកោង និងឧទាហរណ៍គណនា។
+
+    [:octicons-arrow-right-24: អានសៀវភៅ](book/index.md)
+
 -   :material-pencil:{ .lg .middle } **អត្ថបទ**
 
     ---
