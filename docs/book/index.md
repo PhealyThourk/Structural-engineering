@@ -1,7 +1,6 @@
 # Steel Member Design Basics
 
-A short, practical introduction to the design of steel members. The book is a **sample**: it shows
-how a book is organised on this site. Replace the chapters with your own text.
+A practical guide to steel member design, with chapters on cross-section classification and buckling resistance. The design basis is Eurocode 3 (EN 1993-1-1:2022).
 
 ## Contents
 

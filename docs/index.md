@@ -15,7 +15,7 @@ Every calculation is explained step by step, with equations, figures and worked 
 
     ---
 
-    *Steel Member Design Basics*: cross-section classification, buckling resistance, and worked examples.
+    *Steel Member Design Basics*: explore steel member design topics, worked examples, and checks based on Eurocode 3 (EN 1993-1-1:2022).
 
     [:octicons-arrow-right-24: Read the book](book/index.md)
 
