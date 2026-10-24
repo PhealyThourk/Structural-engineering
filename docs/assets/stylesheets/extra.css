@@ -25,3 +25,10 @@
 p {
   text-align: justify;
 }
+
+/* Khmer script support: use an installed Khmer-capable font and comfortable line spacing. */
+html[lang="km"] body {
+  font-family: "Noto Sans Khmer", "Khmer OS", "Leelawadee UI", sans-serif;
+  line-height: 1.85;
+}
+html[lang="km"] .md-typeset { line-height: 1.85; }

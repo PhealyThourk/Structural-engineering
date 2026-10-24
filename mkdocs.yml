@@ -8,6 +8,7 @@ copyright: "© 2026 Phealy Thourk. All rights reserved."
 theme:
   name: material
   language: en
+  custom_dir: overrides
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -26,7 +27,6 @@ theme:
   icon:
     logo: material/book-open-page-variant
   features:
-    - navigation.instant
     - navigation.tabs
     - navigation.top
     - navigation.footer
@@ -37,9 +37,33 @@ theme:
 
 plugins:
   - search
+  - i18n:
+      docs_structure: suffix
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+        - locale: km
+          name: ខ្មែរ
+          build: true
+          site_name: កំណត់ត្រាវិស្វកម្មសំណង់
+          site_description: អត្ថបទពីការរចនាដែកសំណង់ ឌីណាមិចរចនាសម្ព័ន្ធ និងវិស្វកម្មរញ្ជួយដី
+          nav_translations:
+            Home: ទំព័រដើម
+            Blog: អត្ថបទ
+            Tools: ឧបករណ៍
+            About: អំពី
+            Book: សៀវភៅ
+            Forced harmonic response: ចម្លើយអាម៉ូនិកដោយបង្ខំ
+            Suddenly applied load: បន្ទុកដែលដាក់ភ្លាមៗ
+            Free vibration: ចលនាសេរី
+            IPE 330 buckling: ការកោងសសរ IPE 330
+            Welcome: សូមស្វាគមន៍
   - blog:
-      blog_dir: blog
-      post_date_format: long
+      enabled: false
 
 markdown_extensions:
   - admonition
@@ -70,11 +94,17 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  #- Book:
-  #    - book/index.md
-  #    - 1. Introduction: book/01-introduction.md
-   #   - 2. Cross-section classification: book/02-classification.md
-  #    - 3. Flexural buckling: book/03-buckling.md
-  - Blog: blog/index.md
+  - Book:
+      - book/index.md
+      - 1. Introduction: book/01-introduction.md
+      - 2. Cross-section classification: book/02-classification.md
+      - 3. Flexural buckling: book/03-buckling.md
+  - Blog:
+      - blog/index.md
+      - Forced harmonic response: blog/posts/forced-harmonic-response.md
+      - Suddenly applied load: blog/posts/response_to_p0.md
+      - Free vibration: "blog/posts/damped free vibration of 1 dof system.md"
+      - IPE 330 buckling: blog/posts/flexural-buckling-ipe330.md
+      - Welcome: blog/posts/welcome.md
   - Tools: tools.md
   - About: about.md
