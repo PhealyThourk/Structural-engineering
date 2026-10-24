@@ -2,7 +2,7 @@ site_name: Structural Engineering Notes
 site_description: Articles and books on structural steel design, structural analysis, dynamic analysis, and earthquake engineering
 site_author: Phealy Thourk
 # TODO: replace YOUR-USERNAME (and the repository name if you chose another one)
-site_url: https://PhealyThourk.github.io/engineering-notes/
+site_url: https://phealythourk.github.io/Structural-engineering/
 copyright: "© 2026 Phealy Thourk. All rights reserved."
 
 theme:
