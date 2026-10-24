@@ -2,15 +2,15 @@
 
 ## Steel member design check
 
-A web app for the resistance and buckling checks of I- and H-sections:
+Interactive browser calculator based on the supplied Python design program. Select an I- or H-section and steel grade, enter design forces and buckling parameters, then run the cross-section and member stability checks. The results include utilization ratios and interactive buckling plots. Use the print control to save the results as PDF.
 
 - cross-section classification and resistance (class 1 to 3),
 - flexural, torsional and torsional-flexural buckling,
 - lateral torsional buckling,
 - combined bending and axial compression,
-- a PDF report with all inputs, results and buckling curves.
+- on-page results with buckling reduction plots and print-to-PDF.
 
-[:material-open-in-new: Open the web app](https://steel-design-to-ec3-webapp.streamlit.app/){ .md-button .md-button--primary }
+[:material-open-in-new: Open Steel member design check](assets/tools/steel-member-design-tool.html){ .md-button .md-button--primary target="_blank" rel="noopener" }
 
 !!! warning "Use with care"
     The results must be checked independently by a qualified structural engineer before they
@@ -21,6 +21,9 @@ A web app for the resistance and buckling checks of I- and H-sections:
 Explore the displacement response of a damped single degree of freedom system under sinusoidal loading. Enter mass, stiffness, damping, force amplitude, forcing frequency, initial conditions, and plot duration. The tool plots total, transient, and steady state response over time and reports natural frequency, frequency ratio, and steady state amplitude.
 
 [:material-open-in-new: Vibration to Forced Harmonic Load](assets/tools/forced-response-tool.html){ .md-button target="_blank" rel="noopener" }
+
+
+
 
 
 

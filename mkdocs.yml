@@ -36,11 +36,13 @@ theme:
     - content.code.copy
 
 plugins:
-  - search
+  - search:
+      lang:
+        - en
   - i18n:
       docs_structure: suffix
       reconfigure_material: true
-      reconfigure_search: true
+      reconfigure_search: false
       languages:
         - locale: en
           name: English
@@ -108,3 +110,4 @@ nav:
       - Welcome: blog/posts/welcome.md
   - Tools: tools.md
   - About: about.md
+

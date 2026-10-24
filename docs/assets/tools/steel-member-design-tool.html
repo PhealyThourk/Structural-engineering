@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Browser-based steel member design checks based on the supplied EN 1993 calculation procedure."
+    />
+    <title>Steel member design check</title>
+    <link rel="stylesheet" href="steel-member-design-tool.css" />
+    <script src="steel-member-design-tool.js" defer></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="app-header__inner">
+        <p class="eyebrow">STRUCTURAL ENGINEERING TOOL</p>
+        <h1>Steel member design check</h1>
+        <p>
+          Check cross-section resistance, member buckling, lateral torsional
+          buckling, and combined actions for steel I- and H-sections.
+        </p>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <div class="calculator-layout">
+        <section class="card input-card" aria-labelledby="inputs-heading">
+          <h2 id="inputs-heading">Design inputs</h2>
+          <div class="tabs" role="tablist" aria-label="Design input groups">
+            <button class="tab active" type="button" data-pane="section-pane">
+              Section &amp; material
+            </button>
+            <button class="tab" type="button" data-pane="actions-pane">
+              Actions
+            </button>
+            <button class="tab" type="button" data-pane="lengths-pane">
+              Buckling lengths
+            </button>
+            <button class="tab" type="button" data-pane="ltb-pane">
+              LTB &amp; factors
+            </button>
+          </div>
+
+          <div id="section-pane" class="pane active">
+            <div class="input-grid">
+              <div class="field wide">
+                <label for="series">Section series</label>
+                <select id="series"></select>
+              </div>
+              <div class="field wide">
+                <label for="section">Section</label>
+                <select id="section"></select>
+              </div>
+              <div class="field wide">
+                <label for="grade">Steel grade</label>
+                <select id="grade">
+                  <option>S235</option>
+                  <option>S275</option>
+                  <option>S355</option>
+                  <option>S420</option>
+                  <option>S460</option>
+                  <option>S500</option>
+                  <option>S550</option>
+                  <option>S600</option>
+                  <option>S620</option>
+                  <option>S650</option>
+                  <option>S690</option>
+                  <option>S700</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="author">Report author</label>
+                <input
+                  id="author"
+                  type="text"
+                  maxlength="80"
+                  placeholder="Optional"
+                />
+              </div>
+              <div class="field">
+                <label for="hole">Hole area, A<sub>hole</sub> (cm²)</label>
+                <input id="hole" type="number" min="0" step="0.1" value="0" />
+              </div>
+              <div class="field">
+                <label for="kfactor">Net-section factor, k</label>
+                <input
+                  id="kfactor"
+                  type="number"
+                  min="0.1"
+                  max="1"
+                  step="0.01"
+                  value="1"
+                />
+              </div>
+              <div class="field">
+                <label for="gm0">γ<sub>M0</sub></label
+                ><input
+                  id="gm0"
+                  type="number"
+                  min="0.1"
+                  step="0.05"
+                  value="1"
+                />
+              </div>
+              <div class="field">
+                <label for="gm1">γ<sub>M1</sub></label
+                ><input
+                  id="gm1"
+                  type="number"
+                  min="0.1"
+                  step="0.05"
+                  value="1"
+                />
+              </div>
+              <div class="field">
+                <label for="gm2">γ<sub>M2</sub></label
+                ><input
+                  id="gm2"
+                  type="number"
+                  min="0.1"
+                  step="0.05"
+                  value="1.25"
+                />
+              </div>
+              <div class="field">
+                <label for="annex">Annex B Class 3 method</label>
+                <select id="annex">
+                  <option value="yes">On</option>
+                  <option value="no">Off</option>
+                </select>
+              </div>
+            </div>
+            <p id="section-summary" class="section-summary"></p>
+          </div>
+
+          <div id="actions-pane" class="pane">
+            <div class="input-grid">
+              <div class="field">
+                <label for="N">N<sub>Ed</sub> (compression +) [kN]</label
+                ><input id="N" type="number" step="1" value="120" />
+              </div>
+              <div class="field">
+                <label for="My">M<sub>Ed,y</sub> [kNm]</label
+                ><input id="My" type="number" step="1" value="93.75" />
+              </div>
+              <div class="field">
+                <label for="Mz">M<sub>Ed,z</sub> [kNm]</label
+                ><input id="Mz" type="number" step="1" value="0" />
+              </div>
+              <div class="field">
+                <label for="Vz">V<sub>Ed,z</sub> [kN]</label
+                ><input id="Vz" type="number" step="1" value="0" />
+              </div>
+              <div class="field">
+                <label for="Vy">V<sub>Ed,y</sub> [kN]</label
+                ><input id="Vy" type="number" step="1" value="0" />
+              </div>
+              <div class="field">
+                <label for="T">T<sub>Ed</sub> [kNm]</label
+                ><input id="T" type="number" step="1" value="0" />
+              </div>
+              <div class="field">
+                <label for="B">B<sub>Ed</sub> [kNm²]</label
+                ><input id="B" type="number" step="1" value="0" />
+              </div>
+            </div>
+          </div>
+
+          <div id="lengths-pane" class="pane">
+            <div class="input-grid">
+              <div class="field">
+                <label for="Lcry">L<sub>cr,y</sub> [m]</label
+                ><input
+                  id="Lcry"
+                  type="number"
+                  min="0.01"
+                  step="0.1"
+                  value="3"
+                />
+              </div>
+              <div class="field">
+                <label for="Lcrz">L<sub>cr,z</sub> [m]</label
+                ><input
+                  id="Lcrz"
+                  type="number"
+                  min="0.01"
+                  step="0.1"
+                  value="3"
+                />
+              </div>
+              <div class="field">
+                <label for="LcrT">L<sub>cr,T</sub> [m]</label
+                ><input
+                  id="LcrT"
+                  type="number"
+                  min="0.01"
+                  step="0.1"
+                  value="3"
+                />
+              </div>
+              <div class="field">
+                <label for="dz">Support offset, d<sub>z</sub> [mm]</label
+                ><input id="dz" type="number" step="1" value="0" />
+              </div>
+              <div class="field wide">
+                <label for="LcrLT"
+                  >LTB unrestrained length, L<sub>cr,LT</sub> [m]</label
+                ><input
+                  id="LcrLT"
+                  type="number"
+                  min="0.01"
+                  step="0.1"
+                  value="3"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div id="ltb-pane" class="pane">
+            <div class="input-grid">
+              <div class="field">
+                <label for="Mcr"
+                  >Elastic critical moment, M<sub>cr</sub> [kNm]</label
+                >
+                <input id="Mcr" type="number" min="0" step="1" value="185.21" />
+                <span class="unit"
+                  >Enter 0 to calculate M<sub>cr</sub> from cases 2-5.</span
+                >
+              </div>
+              <div class="field">
+                <label for="case">M<sub>cr</sub> load case</label
+                ><select id="case">
+                  <option value="2">Case 2</option>
+                  <option value="3">Case 3</option>
+                  <option value="4">Case 4</option>
+                  <option value="5">Case 5</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="loadloc">Load position</label
+                ><select id="loadloc">
+                  <option value="topflange">Top flange</option>
+                  <option value="middle">At shear centre</option>
+                  <option value="bottomflange">Bottom flange</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="mu">μ value for M<sub>cr</sub> case</label
+                ><input id="mu" type="number" min="0" step="0.01" value="0.1" />
+              </div>
+              <div class="field">
+                <label for="Cmy">Moment shape C<sub>my</sub></label
+                ><select id="Cmy">
+                  <option value="1">End moments</option>
+                  <option value="2">Transverse loading - shape 2</option>
+                  <option value="3">Transverse loading - shape 3</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="Cmz">Moment shape C<sub>mz</sub></label
+                ><select id="Cmz">
+                  <option value="1">End moments</option>
+                  <option value="2">Transverse loading - shape 2</option>
+                  <option value="3">Transverse loading - shape 3</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="CmLT">Moment shape C<sub>m,LT</sub></label
+                ><select id="CmLT">
+                  <option value="1">End moments</option>
+                  <option value="2">Transverse loading - shape 2</option>
+                  <option value="3">Transverse loading - shape 3</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="loadtype">Load type</label
+                ><select id="loadtype">
+                  <option>Uniform</option>
+                  <option>Concentrated</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="psiY">ψ C<sub>my</sub></label
+                ><input id="psiY" type="number" step="0.1" value="1" />
+              </div>
+              <div class="field">
+                <label for="alphaY">α C<sub>my</sub></label
+                ><input id="alphaY" type="number" step="0.1" value="0" />
+              </div>
+              <div class="field">
+                <label for="psiZ">ψ C<sub>mz</sub></label
+                ><input id="psiZ" type="number" step="0.1" value="1" />
+              </div>
+              <div class="field">
+                <label for="alphaZ">α C<sub>mz</sub></label
+                ><input id="alphaZ" type="number" step="0.1" value="0" />
+              </div>
+              <div class="field">
+                <label for="psiLT">ψ C<sub>m,LT</sub></label
+                ><input id="psiLT" type="number" step="0.1" value="1" />
+              </div>
+              <div class="field">
+                <label for="alphaLT">α C<sub>m,LT</sub></label
+                ><input id="alphaLT" type="number" step="0.1" value="0" />
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="run" type="button">
+              Run design check
+            </button>
+            <button class="secondary" id="reset" type="button">Reset</button>
+          </div>
+        </section>
+
+        <section
+          class="card results-card"
+          id="results-pane"
+          aria-labelledby="results-heading"
+        >
+          <h2 id="results-heading" class="screen-only">Design check report</h2>
+          <div id="error" class="error" role="alert"></div>
+          <div id="results">
+            <p class="hint">
+              Enter the design inputs and select
+              <strong>Run design check</strong>. Your report preview will appear
+              here.
+            </p>
+          </div>
+        </section>
+      </div>
+      <p class="screen-only safety-note">
+        For preliminary engineering use only. Verify the calculation method,
+        section data, design assumptions, and results independently against the
+        applicable National Annex and project requirements. Class 4 sections and
+        non-General LTB methods are not supported.
+      </p>
+    </main>
+  </body>
+</html>
