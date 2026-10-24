@@ -20,6 +20,7 @@ A web app for the resistance and buckling checks of I- and H-sections:
 
 Explore the displacement response of a damped single degree of freedom system under sinusoidal loading. Enter mass, stiffness, damping, force amplitude, forcing frequency, initial conditions, and plot duration. The tool plots total, transient, and steady state response over time and reports natural frequency, frequency ratio, and steady state amplitude.
 
-[:material-open-in-new: Vibration to Forced Harmonic Load](../assets/tools/forced-response-tool.html){ .md-button target="_blank" rel="noopener" }
+[:material-open-in-new: Vibration to Forced Harmonic Load](assets/tools/forced-response-tool.html){ .md-button target="_blank" rel="noopener" }
+
 
 
