@@ -63,38 +63,74 @@ Which is also the general solution to the homogenous ordinary differential equat
 
 $$
 \beta=\frac{\Omega}{\omega_n},\qquad
-D=(1-\beta^2)^2+(2\xi\beta)^2,
+D=(1-\beta^2)^2+(2\xi\beta)^2.
 $$
+
+The transient constants are
 
 $$
 B_1=u_0+\frac{2\xi\beta}{D}\frac{P_0}{k},\qquad
 B_2=\frac{v_0+\xi\omega_n B_1}{\omega_d}
--\frac{(1-\beta^2)\Omega}{\omega_d D}\frac{P_0}{k}.
+-\frac{(1-\beta^2)\Omega}{\omega_dD}\frac{P_0}{k}.
 $$
 
 The steady-state response is
 
 $$
-u_{\mathrm{ss}}(t)=\frac{P_0}{k\sqrt{D}}\sin(\Omega t-\phi),
+u_{\mathrm{ss}}(t)=\frac{P_0}{k\sqrt D}\sin(\Omega t-\phi),
 $$
 
-which is also the particular solution to the above ordinary differential equation. The phase angle is defined by
+with phase angle
 
 $$
-\cos\phi=\frac{1-\beta^2}{\sqrt{D}},\qquad
-\sin\phi=\frac{2\xi\beta}{\sqrt{D}},\qquad
+\cos\phi=\frac{1-\beta^2}{\sqrt D},\qquad
+\sin\phi=\frac{2\xi\beta}{\sqrt D},\qquad
 \tan\phi=\frac{2\xi\beta}{1-\beta^2}.
 $$
 
-The steady-state displacement amplitude is $P_0/(k\sqrt D)$; it is independent of the initial conditions. By contrast, the transient term ensures that the total response satisfies the specified initial conditions.
+For numerical calculation, use $\phi=\operatorname{atan2}(2\xi\beta,1-\beta^2)$ so that the phase lies in the correct quadrant; the tangent relation alone does not determine the quadrant. The steady-state displacement amplitude is $P_0/(k\sqrt D)$ and is independent of the initial conditions. The transient term ensures that the total response satisfies the specified initial conditions.
 
-## Chapter 2 — Figure 1: Dynamic denominator $D$ versus frequency ratio
+## Chapter 2 — Figure 1: Dynamic amplification factor versus frequency ratio
 
-![Dynamic denominator D as a function of beta for xi equal to 0.05](../../assets/images/dynamic-denominator-vs-beta.svg)
+![Dynamic amplification factor A versus beta for xi equal to 0.05](../../assets/images/dynamic-denominator-vs-beta.svg)
 
-Figure 1 plots $D$ over $0\leq\beta\leq3$ for $\xi=0.05$. At $\beta=0$, $D=1$. At $\beta=1$, the term $(1-\beta^2)^2$ is zero and $D=4\xi^2=0.01$. Thus the denominator has a small positive value at the natural-frequency ratio; damping prevents it from becoming zero.
+Figure 1 plots the dynamic amplification factor $A$ over $0\leq\beta\leq3$ for $\xi=0.05$, where
 
-The steady-state amplitude is inversely proportional to $\sqrt D$. A small $D$ therefore corresponds to a large displacement amplitude. For frequency ratios greater than one, $D$ grows rapidly as the excitation moves farther above the natural frequency, and the displacement amplitude decreases. This plot is the key to interpreting the three time histories that follow.
+
+
+$$
+A(\xi,\beta)=\frac{1}{\sqrt{(1-\beta^2)^2+(2\xi\beta)^2}}.
+$$
+
+
+
+The steady-state displacement amplitude is
+
+
+
+$$
+u_{\mathrm{ss,amp}}=\frac{P_0}{k}A
+=\underbrace{\frac{P_0}{k}}_{\text{static displacement}}\,
+\underbrace{A}_{\text{dynamic amplification factor}}.
+$$
+
+
+
+Thus, $P_0/k$ is the static displacement under a constant force of magnitude $P_0$, while $A$ scales that static displacement to obtain the sinusoidal steady-state amplitude. For the inputs used here, $P_0/k=0.0025$ m (2.5 mm).
+
+At $\beta=0$, $A=1$. For nonzero damping, the maximum generally occurs slightly below $\beta=1$. Setting $dA/d\beta=0$ gives:
+
+$$
+\beta_{\max}=\sqrt{1-2\xi^2}, \qquad 0<\xi<\frac{1}{\sqrt{2}}.
+$$
+
+For $\xi=0.05$, $\beta_{\max}=0.9975$ and $A_{\max}=1/(2\xi\sqrt{1-\xi^2})=10.0125$. At exactly $\beta=1$, $A=1/(2\xi)=10$, which is very close but slightly below the maximum for this damping ratio. As the excitation frequency moves above the peak, $A$ decreases, and the steady-state amplitude becomes smaller relative to the static displacement.
+
+### Peak frequency ratio versus damping ratio
+
+![Peak frequency ratio as a function of damping ratio](../../assets/images/beta-peak-vs-damping.svg)
+
+Figure 1b plots the frequency ratio that maximizes $A$ as damping varies. The condition $dA/d\beta=0$ yields $\beta_{\max}=\sqrt{1-2\xi^2}$ while $0<\xi<1/\sqrt{2}$. The peak shifts to lower frequency ratios as damping increases. The point for the system considered here, $\xi=0.05$, is marked on the curve. At zero damping, the response is unbounded at $\beta=1$; at and above $\xi=1/\sqrt{2}$, the maximum over nonnegative frequency ratios occurs at $\beta=0$.
 
 For the three forcing frequencies, the frequency ratios are approximately 0.994, 1.193, and 1.988, respectively. The 2.5 Hz load is almost coincident with the system’s natural frequency, while the 5.0 Hz load is close to twice that frequency.
 
@@ -124,7 +160,7 @@ The peak total displacement during start-up is not determined by the steady-stat
 
 For $f=5.0$ Hz, $\Omega=31.416$ rad/s and $\beta\approx1.988$. The excitation is well above the natural frequency. The steady-state displacement amplitude is approximately 0.84 mm, the smallest of the three cases.
 
-The response still contains a transient at the start, and the total response may briefly exceed the steady-state amplitude while the two components combine. The transient fades with time, leaving a smaller oscillation at the forcing frequency. The result is consistent with Figure 1: at this higher frequency ratio, $D$ is much larger than near $\beta=1$, so $P_0/(k\sqrt D)$ is smaller.
+The response still contains a transient at the start, and the total response may briefly exceed the steady-state amplitude while the two components combine. The transient fades with time, leaving a smaller oscillation at the forcing frequency. The result is consistent with Figure 1: at this higher frequency ratio, $A$ is much smaller than near $\beta_{\max}$, so $(P_0/k)A$ is smaller.
 
 ## Chapter 6 — Discussion
 
@@ -149,7 +185,7 @@ The model assumes linear elastic stiffness, viscous damping, constant system pro
 ## Chapter 7 — Conclusions
 
 1. The system has an undamped natural frequency of approximately 2.516 Hz and a damped natural frequency of approximately 2.513 Hz.
-2. The denominator $D$ is small near $\beta=1$, producing strong steady-state amplification. For $\xi=0.05$, $D(1)=0.01$ rather than zero.
+2. For $0<\xi<1/\sqrt{2}$, the peak occurs at $\beta_{\max}=\sqrt{1-2\xi^2}$. For $\xi=0.05$, $\beta_{\max}=0.9975$ and $A_{\max}=10.0125$.
 3. Of the three excitation cases, 2.5 Hz produces the largest steady-state displacement (about 25 mm), followed by 3.0 Hz (about 5.7 mm) and 5.0 Hz (about 0.84 mm).
 4. The transient response is important at the start of loading but decays with time. After it has sufficiently diminished, the total response is governed by the steady-state oscillation at the force frequency.
 5. Start-up peak displacement can exceed the steady-state amplitude because the transient and steady-state components combine according to their phases.

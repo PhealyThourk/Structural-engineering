@@ -2,9 +2,10 @@ from pathlib import Path
 
 translations = {
 'dynamic-denominator-vs-beta.svg': {
-'D as a function of frequency ratio (ξ = 0.05)': 'D តាមសមាមាត្រប្រេកង់ (ξ = 0.05)',
-'Frequency ratio, β = Ω / ωₙ': 'សមាមាត្រប្រេកង់, β = Ω / ωₙ',
+'Dynamic amplification factor A (ξ = 0.05)': 'កត្តាពង្រីកថាមវន្ត A (ξ = 0.05)',
+'Frequency ratio, β = Ω / ωₙ': 'សមាមាត្រប្រេកង់, β = Ω / ωₙ', 'Dynamic amplification factor, A': 'កត្តាពង្រីកថាមវន្ត, A', 'Maximum: β = 0.9975, A = 10.0125': 'អតិបរមា៖ β = 0.9975, A = 10.0125', 'Static displacement: P₀/k = 2.5 mm': 'ការផ្លាស់ទីឋិតិវន្ត: P₀/k = 2.5 mm',
 },
+'beta-peak-vs-damping.svg': {'Frequency ratio at maximum amplification': 'សមាមាត្រប្រេកង់នៅកត្តាពង្រីកអតិបរមា', 'Damping ratio, ξ': 'អនុបាតអំពើអូសទាញ, ξ', 'Peak frequency ratio, βₘₐₓ': 'សមាមាត្រប្រេកង់កំពូល, βₘₐₓ', 'ξ = 0.05: βₘₐₓ = 0.9975': 'ξ = 0.05៖ βₘₐₓ = 0.9975'},
 'forced-response-2.5hz.svg': {},
 'forced-response-3hz.svg': {},
 'forced-response-5hz.svg': {},
