@@ -53,7 +53,7 @@ select {
 }
 .calculator-layout {
   display: grid;
-  grid-template-columns: minmax(320px, 440px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 20px;
   align-items: start;
 }
@@ -498,11 +498,17 @@ select:focus {
 }
 .report-formula {
   margin: 5px 0 0;
-  padding-top: 4px;
+  padding-top: 5px;
   border-top: 1px solid #c9d5e4;
-  color: #667791;
+  color: #52647d;
   font-size: 9.5px;
-  font-style: italic;
+  line-height: 1.65;
+}
+.report-equation-label {
+  display: inline-block;
+  margin-top: 4px;
+  color: #30445f;
+  font-weight: 700;
 }
 .results-major {
   break-before: page;

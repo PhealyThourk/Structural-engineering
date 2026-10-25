@@ -25,13 +25,18 @@ async function init() {
     $("section").addEventListener("change", showSection);
     $("run").addEventListener("click", run);
     $("reset").addEventListener("click", () => location.reload());
-    document.querySelectorAll(".tab").forEach(
-      (b) =>
-        (b.onclick = () => {
-          b.classList.add("active");
-          $(b.dataset.pane).classList.add("active");
-        }),
-    );
+    document.querySelectorAll(".tab").forEach((button) => {
+      button.addEventListener("click", () => {
+        document
+          .querySelectorAll(".tab")
+          .forEach((tab) => tab.classList.remove("active"));
+        document
+          .querySelectorAll(".pane")
+          .forEach((pane) => pane.classList.remove("active"));
+        button.classList.add("active");
+        $(button.dataset.pane).classList.add("active");
+      });
+    });
     showSection();
   } catch (e) {
     showError(e.message);
@@ -341,6 +346,20 @@ function mcrFromCase(s, v) {
   throw Error("Selected Mcr case is not supported.");
 }
 // 4. Equivalent-moment and interaction-factor calculations.
+function validateMomentFactorInputs(shapeId, psiId, alphaId) {
+  const shape = Number($(shapeId).value);
+  const psi = number(psiId);
+  const alpha = number(alphaId);
+  const validRange = alpha > -1 && alpha < 1 && psi > -1 && psi < 1;
+
+  if (shape === 2 && !validRange) {
+    throw Error("Invalid inputs. Choose -1 < alpha_s < 1, -1 < psi < 1");
+  }
+  if (shape === 3 && !validRange) {
+    throw Error("Invalid inputs. Choose -1 < alpha_h < 1, -1 < psi < 1");
+  }
+}
+
 function cmFactor(shape, psi, alpha, load) {
   shape = +shape;
   if (shape === 1) return Math.max(0.6 + 0.4 * psi, 0.4);
@@ -422,8 +441,17 @@ function read() {
 function run() {
   try {
     $("error").style.display = "none";
-    let v = read(),
-      s = sec(),
+    let v = read();
+    if (v.N === 0 && v.My === 0 && v.Mz === 0) {
+      throw Error(
+        "The section classification needs a non-zero axial force N_Ed or a non-zero bending moment M_Edy and M_Edz.",
+      );
+    }
+    validateMomentFactorInputs("Cmy", "psiY", "alphaY");
+    validateMomentFactorInputs("Cmz", "psiZ", "alphaZ");
+    validateMomentFactorInputs("CmLT", "psiLT", "alphaLT");
+
+    let s = sec(),
       mat = steel(),
       fy = mat.fy,
       fu = mat.fu,
@@ -762,10 +790,6 @@ function run() {
       curveY: curveFor(s, fy, "y", FB_y),
       curveZ: curveFor(s, fy, "z", FB_z),
     });
-    document
-      .querySelectorAll(".tab,.pane")
-      .forEach((x) => x.classList.remove("active"));
-    $("results-pane").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (e) {
     showError(e.message);
   }
@@ -924,8 +948,8 @@ function render(r) {
       ],
       [
         "Radii of gyration",
-        "i<sub>y</sub> / i<sub>z</sub> / i<sub>p</sub>",
-        `${fmt(section["iy[mm]"], 1)} / ${fmt(section["iz[mm]"], 1)} / ${fmt(section["ip[mm]"], 1)} mm`,
+        "i<sub>y</sub>, i<sub>z</sub>, i<sub>p</sub>",
+        `${fmt(section["iy[mm]"], 1)}, ${fmt(section["iz[mm]"], 1)}, ${fmt(section["ip[mm]"], 1)} mm`,
       ],
     ]),
     reportSection("1.3 Material", [
@@ -1007,19 +1031,19 @@ function render(r) {
     reportSection("1.8 Combined bending and compression inputs", [
       [
         "Moment shape factors",
-        "C<sub>my</sub> / C<sub>mz</sub> / C<sub>m,LT</sub>",
-        `${$("Cmy").selectedOptions[0].textContent} / ${$("Cmz").selectedOptions[0].textContent} / ${$("CmLT").selectedOptions[0].textContent}`,
+        "C<sub>my</sub>, C<sub>mz</sub>, C<sub>m,LT</sub>",
+        `${$("Cmy").selectedOptions[0].textContent}, ${$("Cmz").selectedOptions[0].textContent}, ${$("CmLT").selectedOptions[0].textContent}`,
       ],
       ["Load type", "—", $("loadtype").value],
       [
         "ψ values",
-        "ψ<sub>y</sub> / ψ<sub>z</sub> / ψ<sub>LT</sub>",
-        `${fmt(input.psiY, 2)} / ${fmt(input.psiZ, 2)} / ${fmt(input.psiLT, 2)}`,
+        "ψ<sub>y</sub>, ψ<sub>z</sub>, ψ<sub>LT</sub>",
+        `${fmt(input.psiY, 2)}, ${fmt(input.psiZ, 2)}, ${fmt(input.psiLT, 2)}`,
       ],
       [
         "α values",
-        "α<sub>y</sub> / α<sub>z</sub> / α<sub>LT</sub>",
-        `${fmt(input.alphaY, 2)} / ${fmt(input.alphaZ, 2)} / ${fmt(input.alphaLT, 2)}`,
+        "α<sub>y</sub>, α<sub>z</sub>, α<sub>LT</sub>",
+        `${fmt(input.alphaY, 2)}, ${fmt(input.alphaZ, 2)}, ${fmt(input.alphaLT, 2)}`,
       ],
     ]),
   ].join("");
@@ -1099,8 +1123,8 @@ function render(r) {
       ],
       [
         "Interaction factors",
-        "k<sub>yy</sub> / k<sub>yz</sub>",
-        `${fmt(r.kFlex.kyy, 3)} / ${fmt(r.kFlex.kyz, 3)}`,
+        "k<sub>yy</sub>, k<sub>yz</sub>",
+        `${fmt(r.kFlex.kyy, 3)}, ${fmt(r.kFlex.kyz, 3)}`,
         "Table 8.7",
       ],
       [
@@ -1126,8 +1150,8 @@ function render(r) {
       ],
       [
         "Interaction factors",
-        "k<sub>zy</sub> / k<sub>zz</sub>",
-        `${fmt(r.kFlex.kzy, 3)} / ${fmt(r.kFlex.kzz, 3)}`,
+        "k<sub>zy</sub>, k<sub>zz</sub>",
+        `${fmt(r.kFlex.kzy, 3)}, ${fmt(r.kFlex.kzz, 3)}`,
         "Table 8.8",
       ],
       [
@@ -1195,14 +1219,14 @@ function render(r) {
         ],
         [
           "Interaction factors",
-          "k<sub>yy</sub> / k<sub>yz</sub>",
-          `${fmt(r.kTF.kyy, 3)} / ${fmt(r.kTF.kyz, 3)}`,
+          "k<sub>yy</sub>, k<sub>yz</sub>",
+          `${fmt(r.kTF.kyy, 3)}, ${fmt(r.kTF.kyz, 3)}`,
           "Table 8.7",
         ],
         [
           "Interaction factors",
-          "k<sub>zy</sub> / k<sub>zz</sub>",
-          `${fmt(r.kTF.kzy, 3)} / ${fmt(r.kTF.kzz, 3)}`,
+          "k<sub>zy</sub>, k<sub>zz</sub>",
+          `${fmt(r.kTF.kzy, 3)}, ${fmt(r.kTF.kzz, 3)}`,
           "Table 8.8",
         ],
         [
@@ -1240,32 +1264,46 @@ function render(r) {
         "",
       ],
     ]),
-    reportSection("2.7 Combined bending and axial compression", [
+    reportSection(
+      "2.7 Combined bending and axial compression",
       [
-        "Eq. (8.88) using χ<sub>z</sub>",
-        "—",
-        fmt(r.ratios["Combined interaction · Eq. 8.88"], 3),
-        "",
+        [
+          "Eq. (8.88) using χ<sub>y</sub>",
+          "—",
+          fmt(r.ratios["Combined interaction · Eq. 8.88"], 3),
+          "",
+        ],
+        [
+          "Eq. (8.88) using χ<sub>TF</sub>",
+          "—",
+          fmt(r.ratios["Combined interaction · Eq. 8.88, TF"], 3),
+          "",
+        ],
+        [
+          "Eq. (8.89) using χ<sub>z</sub>",
+          "—",
+          fmt(r.ratios["Combined interaction · Eq. 8.89"], 3),
+          "",
+        ],
+        [
+          "Eq. (8.89) using χ<sub>TF</sub>",
+          "—",
+          fmt(r.ratios["Combined interaction · Eq. 8.89, TF"], 3),
+          "",
+        ],
       ],
-      [
-        "Eq. (8.88) using χ<sub>TF</sub>",
-        "—",
-        fmt(r.ratios["Combined interaction · Eq. 8.88, TF"], 3),
-        "",
-      ],
-      [
-        "Eq. (8.89) using χ<sub>z</sub>",
-        "—",
-        fmt(r.ratios["Combined interaction · Eq. 8.89"], 3),
-        "",
-      ],
-      [
-        "Eq. (8.89) using χ<sub>TF</sub>",
-        "—",
-        fmt(r.ratios["Combined interaction · Eq. 8.89, TF"], 3),
-        "",
-      ],
-    ]),
+      {
+        formula: `
+          <span class="report-equation-label">Eq. (8.88), buckling about the y-axis</span><br>
+          N<sub>Ed</sub> / (χ<sub>y</sub> N<sub>Rk</sub> / γ<sub>M1</sub>) + k<sub>yy</sub> |M<sub>y,Ed</sub>| / (χ<sub>LT</sub> M<sub>y,Rk</sub> / γ<sub>M1</sub>) + k<sub>yz</sub> |M<sub>z,Ed</sub>| / (M<sub>z,Rk</sub> / γ<sub>M1</sub>) ≤ 1.0<br>
+          <span class="report-equation-label">Eq. (8.88), torsional-flexural variant</span><br>
+          N<sub>Ed</sub> / (χ<sub>TF</sub> N<sub>Rk</sub> / γ<sub>M1</sub>) + k<sub>yy,TF</sub> |M<sub>y,Ed</sub>| / (χ<sub>LT</sub> M<sub>y,Rk</sub> / γ<sub>M1</sub>) + k<sub>yz,TF</sub> |M<sub>z,Ed</sub>| / (M<sub>z,Rk</sub> / γ<sub>M1</sub>) ≤ 1.0<br>
+          <span class="report-equation-label">Eq. (8.89), buckling about the z-axis</span><br>
+          N<sub>Ed</sub> / (χ<sub>z</sub> N<sub>Rk</sub> / γ<sub>M1</sub>) + k<sub>zy</sub> |M<sub>y,Ed</sub>| / (χ<sub>LT</sub> M<sub>y,Rk</sub> / γ<sub>M1</sub>) + k<sub>zz</sub> |M<sub>z,Ed</sub>| / (M<sub>z,Rk</sub> / γ<sub>M1</sub>) ≤ 1.0<br>
+          <span class="report-equation-label">Eq. (8.89), torsional-flexural variant</span><br>
+          N<sub>Ed</sub> / (χ<sub>TF</sub> N<sub>Rk</sub> / γ<sub>M1</sub>) + k<sub>zy,TF</sub> |M<sub>y,Ed</sub>| / (χ<sub>LT</sub> M<sub>y,Rk</sub> / γ<sub>M1</sub>) + k<sub>zz,TF</sub> |M<sub>z,Ed</sub>| / (M<sub>z,Rk</sub> / γ<sub>M1</sub>) ≤ 1.0`,
+      },
+    ),
     verificationSummary,
   ].join("");
 
