@@ -88,7 +88,7 @@ $$
 \tan\phi=\frac{2\xi\beta}{1-\beta^2}.
 $$
 
-For numerical calculation, use $\phi=\operatorname{atan2}(2\xi\beta,1-\beta^2)$ so that the phase lies in the correct quadrant; the tangent relation alone does not determine the quadrant. The steady-state displacement amplitude is $P_0/(k\sqrt D)$ and is independent of the initial conditions. The transient term ensures that the total response satisfies the specified initial conditions.
+The steady-state displacement amplitude is $P_0/(k\sqrt D)$ and is independent of the initial conditions. The transient term ensures that the total response satisfies the specified initial conditions.
 
 ## Chapter 2 — Figure 1: Dynamic amplification factor versus frequency ratio
 

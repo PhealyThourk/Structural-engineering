@@ -36,5 +36,4 @@
 <text x="22" y="255" transform="rotate(-90 22 255)" text-anchor="middle" font-size="16">Dynamic amplification factor, A</text>
 <circle cx="339.361701126565" cy="127.93675626288604" r="5" fill="#c43c39"/>
 <text x="354.361701126565" y="115.93675626288604" font-size="13">Maximum: β = 0.9975, A = 10.0125</text>
-<text x="845" y="433" text-anchor="end" font-size="13">Static displacement: P₀/k = 2.5 mm</text>
 </svg>

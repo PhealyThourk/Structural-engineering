@@ -40,26 +40,27 @@ p += [f'<polyline points="{" ".join(coords)}" fill="none" stroke="#1769aa" strok
       f'<text x="467" y="{H-20}" text-anchor="middle" font-size="16">Frequency ratio, β = Ω / ωₙ</text>',
       f'<text x="22" y="255" transform="rotate(-90 22 255)" text-anchor="middle" font-size="16">Dynamic amplification factor, A</text>',
       f'<circle cx="{L+(R-L)*math.sqrt(1-2*xi**2)/3}" cy="{B-(B-T)/(2*xi*math.sqrt(1-xi**2))/12}" r="5" fill="#c43c39"/>',
-      f'<text x="{L+(R-L)*math.sqrt(1-2*xi**2)/3+15}" y="{B-(B-T)/(2*xi*math.sqrt(1-xi**2))/12-12}" font-size="13">Maximum: β = {math.sqrt(1-2*xi**2):.4f}, A = {1/(2*xi*math.sqrt(1-xi**2)):.4f}</text>', 
-      f'<text x="{R-5}" y="{B-12}" text-anchor="end" font-size="13">Static displacement: P₀/k = {P0/k*1000:.1f} mm</text>']
+      f'<text x="{L+(R-L)*math.sqrt(1-2*xi**2)/3+15}" y="{B-(B-T)/(2*xi*math.sqrt(1-xi**2))/12-12}" font-size="13">Maximum: β = {math.sqrt(1-2*xi**2):.4f}, A = {1/(2*xi*math.sqrt(1-xi**2)):.4f}</text>']
+
 write_svg('dynamic-denominator-vs-beta.svg',p)
 
 # Peak frequency ratio as a function of damping ratio, from dA/dbeta = 0.
 W,H=900,520; L,T,R,B=85,65,850,445
-xi_limit=1.0
-xi_transition=1/math.sqrt(2)
+xi_limit=1/math.sqrt(2)
 beta_peak_current=math.sqrt(1-2*xi**2)
 p=svg_start('Frequency ratio at maximum amplification',W,H)
-for i in range(11):
-    xival=i*0.1; x=L+(R-L)*xival/xi_limit
-    p += [f'<line class="grid" x1="{x}" y1="{T}" x2="{x}" y2="{B}"/>',f'<text x="{x}" y="{B+23}" text-anchor="middle" font-size="13">{xival:.1f}</text>']
+tick_values=[i*0.1 for i in range(7)]+[xi_limit]
+for xival in tick_values:
+    x=L+(R-L)*xival/xi_limit
+    label=f'{xival:.3f}' if xival == xi_limit else f'{xival:.1f}'
+    p += [f'<line class="grid" x1="{x}" y1="{T}" x2="{x}" y2="{B}"/>',f'<text x="{x}" y="{B+23}" text-anchor="middle" font-size="13">{label}</text>']
 for i in range(6):
     val=i*.2; y=B-(B-T)*val
     p += [f'<line class="grid" x1="{L}" y1="{y}" x2="{R}" y2="{y}"/>',f'<text x="{L-12}" y="{y+4}" text-anchor="end" font-size="13">{val:.1f}</text>']
 coords=[]
 for j in range(1001):
     ratio=xi_limit*j/1000
-    beta_peak=math.sqrt(max(0,1-2*ratio**2)) if ratio < xi_transition else 0.0
+    beta_peak=math.sqrt(max(0,1-2*ratio**2))
     coords.append(f'{L+(R-L)*ratio/xi_limit:.2f},{B-(B-T)*beta_peak:.2f}')
 xp=L+(R-L)*xi/xi_limit; yp=B-(B-T)*beta_peak_current
 p += [f'<polyline points="{" ".join(coords)}" fill="none" stroke="#1769aa" stroke-width="3"/>',
