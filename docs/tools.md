@@ -2,7 +2,7 @@
 
 ## Steel member design check
 
-Interactive browser calculator based on the supplied Python design program. Select an I- or H-section and steel grade, enter design forces and buckling parameters, then run the cross-section and member stability checks. The results include utilization ratios and interactive buckling plots. Use the print control to save the results as PDF.
+Interactive browser calculator with an HTML, CSS, and JavaScript interface and a Python calculation API. Select an I- or H-section and steel grade, enter design forces and buckling parameters, then run the cross-section and member stability checks. The results include utilization ratios and buckling plots. Use the print control to save the results as PDF. The Python API must be deployed separately from this static documentation site.
 
 - cross-section classification and resistance (class 1 to 3),
 - flexural, torsional and torsional-flexural buckling,

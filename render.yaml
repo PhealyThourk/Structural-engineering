@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: steel-member-design-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: STEEL_API_CORS_ORIGINS
+        value: https://phealythourk.github.io

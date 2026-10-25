@@ -117,3 +117,4 @@ The rest of the article ...
   notice in the Actions tab if one of them needs an update.
 - **If the build fails** on GitHub: open the failed run in the Actions tab and read the red line. The same
   check runs on your computer with `mkdocs build --strict`.
+The calculator UI remains a static webpage. Its calculations run on the separate Python API described in backend/README.md. GitHub Pages hosts only the UI; deploy the API separately and configure steel-member-design-api-config.js.
